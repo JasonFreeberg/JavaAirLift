@@ -10,12 +10,17 @@ def getFtpPublishProfile(def publishProfilesJson) {
 
 node {
   stage('init') {
+    // Check out the GitHub repo
     checkout scm
   }
   
   stage('build') {
-    sh 'echo "building WAR with Maven..."  '
-    sh 'mvn clean package'
+    // Build the JAR and zip it
+    sh '''
+         mvn clean package -Pprod
+         cd target
+         zip application.zip app.jar
+      '''
   }
   
   stage('deploy') {
@@ -35,8 +40,8 @@ node {
     def pubProfilesJson = sh script: "az webapp deployment list-publishing-profiles -g $resourceGroup -n $webAppName", returnStdout: true
     def ftpProfile = getFtpPublishProfile pubProfilesJson
 
-    // Deploy using the /wardeploy API on the Kudu site. We authenticate using the FTP username and password.
-    sh 'curl -X POST -u \\$freebergtomcat'+":${ftpProfile.password} --data-binary @target/calculator-1.0.war https://${webAppName}.scm.azurewebsites.net/api/wardeploy"
+    // Deploy using the /wardeploy API on the Kudu site. We authenticate using the FTP username and password. (Username is just $<site-name>.)
+    sh 'curl -X POST -u \\$freebergjava'+":${ftpProfile.password} --data-binary @target/application.zip https://${webAppName}.scm.azurewebsites.net/api/zipdeploy"
     
     // Log out
     sh 'az logout'
