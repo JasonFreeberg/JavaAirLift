@@ -17,7 +17,7 @@ node {
   stage('build') {
     // Build the JAR and zip it
     sh '''
-         mvn clean package -Pprod
+         mvn clean package -Pproduction
          cd target
          zip application.zip app.jar
       '''
