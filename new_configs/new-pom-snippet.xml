@@ -1,0 +1,56 @@
+<profiles> 
+    <profile> 
+      <!-- This profile will configure Spring to use an in-memory database for local development and testing. -->  
+      <id>dev</id>  
+      <activation> 
+        <activeByDefault>true</activeByDefault> 
+      </activation>  
+      <properties> 
+        <spring.profiles.active>dev</spring.profiles.active>
+      </properties> 
+    </profile>  
+    <profile> 
+      <!-- This profile will configure the application to use our Azure PostgreSQL server. -->  
+      <id>production</id>  
+      <properties>  
+        <spring.profiles.active>prod</spring.profiles.active>
+      </properties> 
+    </profile> 
+  </profiles>  
+  <build> 
+    <finalName>app</finalName>  
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+    <plugins> 
+      <plugin> 
+        <!-- Plugin to deploy to Azure App Service -->
+        <groupId>com.microsoft.azure</groupId>  
+        <artifactId>azure-webapp-maven-plugin</artifactId>  
+        <version>1.5.4</version>  
+        <configuration>
+          <schemaVersion>V2</schemaVersion>
+          <resourceGroup>freebergDemo</resourceGroup>
+          <appName>freebergPostgresDemo</appName>
+          <region>westus</region>
+          <pricingTier>P1V2</pricingTier>
+          <runtime>
+            <os>linux</os>
+            <javaVersion>jre8</javaVersion>
+            <webContainer>jre8</webContainer>
+          </runtime>
+          <deployment>
+            <resources>
+              <resource>
+                <directory>${project.basedir}/target</directory>
+                <includes>
+                  <include>*.jar</include>
+                </includes>
+              </resource>
+            </resources>
+          </deployment>
+        </configuration>
+      </plugin>  
