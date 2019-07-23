@@ -17,6 +17,10 @@ node {
   stage('build') {
     // Build the JAR and zip it
     sh '''
+         export SPRING_DATASOURCE_URL=$( az keyvault secret show --vault-name java-app-key-vault --name POSTGRES-URL --query value)
+         export SPRING_DATASOURCE_USERNAME=$( az keyvault secret show --vault-name java-app-key-vault --name POSTGRES-USERNAME --query value)
+         export SPRING_DATASOURCE_PASSWORD=$( az keyvault secret show --vault-name java-app-key-vault --name POSTGRES-PASSWORD --query value)
+         
          mvn clean package -Pproduction
          cd target
          zip application.zip app.jar
