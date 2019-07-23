@@ -15,6 +15,14 @@ node {
   }
   
   stage('build') {
+    // Log in to Azure using the service principal
+    withCredentials([azureServicePrincipal('jenkinsServicePrincipal')]) {
+      sh '''
+        az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET -t $AZURE_TENANT_ID
+        az account set -s $AZURE_SUBSCRIPTION_ID
+      '''
+    }
+
     // Build the JAR and zip it
     sh '''
          export SPRING_DATASOURCE_URL=$( az keyvault secret show --vault-name java-app-key-vault --name POSTGRES-URL --query value)
@@ -31,14 +39,6 @@ node {
     // Replace these values with your Resource Group and App Service name
     def resourceGroup = 'freebergJenkinsDemo' 
     def webAppName = 'freebergjava'
-    
-    // Log in to Azure using the service principal
-    withCredentials([azureServicePrincipal('jenkinsServicePrincipal')]) {
-      sh '''
-        az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET -t $AZURE_TENANT_ID
-        az account set -s $AZURE_SUBSCRIPTION_ID
-      '''
-    }
 
     // Get the publish profile username and password
     def pubProfilesJson = sh script: "az webapp deployment list-publishing-profiles -g $resourceGroup -n $webAppName", returnStdout: true
