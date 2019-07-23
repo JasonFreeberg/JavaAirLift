@@ -30,7 +30,7 @@ export SPRING_DATASOURCE_URL=$(az keyvault secret show --vault-name java-app-key
 export SPRING_DATASOURCE_USERNAME=$(az keyvault secret show --vault-name java-app-key-vault --name POSTGRES-USERNAME --query value -o tsv)
 export SPRING_DATASOURCE_PASSWORD=$(az keyvault secret show --vault-name java-app-key-vault --name POSTGRES-PASSWORD --query value -o tsv)
 
-        mvn clean package -Pproduction
+        mvn clean package -DskipTests -Pproduction
         cd target
         zip application.zip app.jar
       '''
