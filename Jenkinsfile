@@ -21,13 +21,12 @@ node {
         az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET -t $AZURE_TENANT_ID
         az account set -s $AZURE_SUBSCRIPTION_ID
       '''
-    }
-
+  
     // Build the JAR and zip it
     sh '''
-         export SPRING_DATASOURCE_URL=$( az keyvault secret show --vault-name java-app-key-vault --name POSTGRES-URL --query value)
-         export SPRING_DATASOURCE_USERNAME=$( az keyvault secret show --vault-name java-app-key-vault --name POSTGRES-USERNAME --query value)
-         export SPRING_DATASOURCE_PASSWORD=$( az keyvault secret show --vault-name java-app-key-vault --name POSTGRES-PASSWORD --query value)
+         export SPRING_DATASOURCE_URL=$( az keyvault secret show --vault-name java-app-key-vault --name POSTGRES-URL --query value  -o tsv)
+         export SPRING_DATASOURCE_USERNAME=$( az keyvault secret show --vault-name java-app-key-vault --name POSTGRES-USERNAME --query value -o tsv)
+         export SPRING_DATASOURCE_PASSWORD=$( az keyvault secret show --vault-name java-app-key-vault --name POSTGRES-PASSWORD --query value -o tsv)
          
          mvn clean package -Pproduction
          cd target
