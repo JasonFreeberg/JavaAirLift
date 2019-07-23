@@ -57,48 +57,33 @@
       <activation> 
         <activeByDefault>true</activeByDefault> 
       </activation>  
-      <properties>
-        <spring.profiles.active>dev</spring.profiles.active>
+      <properties> 
+        <spring.datasource.url>jdbc:h2:mem:testdb</spring.datasource.url>  
+        <spring.datasource.username>sa</spring.datasource.username>  
+        <spring.datasource.password></spring.datasource.password>  
+        <spring.datasource.driver-class-name>org.h2.Driver</spring.datasource.driver-class-name>  
+        <spring.jpa.properties.hibernate.dialect>org.hibernate.dialect.H2Dialect</spring.jpa.properties.hibernate.dialect>  
+        <spring.jpa.hibernate.ddl-auto>update</spring.jpa.hibernate.ddl-auto>  
+        <server.port>8080</server.port> 
       </properties> 
     </profile>  
     <profile> 
       <!-- This profile will configure the application to use our Azure PostgreSQL server. -->  
       <id>production</id>  
-      <properties>
-        <spring.profiles.active>prod</spring.profiles.active>
+      <properties> 
+        <spring.datasource.url>${POSTGRES_URL}</spring.datasource.url>
+        <spring.datasource.username>${POSTGRES_USERNAME}</spring.datasource.username>
+        <spring.datasource.password>${POSTGRES_PASSWORD}</spring.datasource.password> 
+        <spring.datasource.driver-class-name>org.postgresql.Driver</spring.datasource.driver-class-name>  
+        <spring.jpa.properties.hibernate.dialect>org.hibernate.dialect.PostgreSQLDialect</spring.jpa.properties.hibernate.dialect>  
+        <spring.jpa.hibernate.ddl-auto>create</spring.jpa.hibernate.ddl-auto>  
+        <server.port>80</server.port> 
       </properties> 
     </profile> 
   </profiles>  
   <build> 
     <finalName>app</finalName>  
-    <plugins> 
-      <plugin> 
-        <groupId>com.microsoft.azure</groupId>  
-        <artifactId>azure-webapp-maven-plugin</artifactId>  
-        <version>1.5.4</version>  
-        <configuration>
-          <schemaVersion>V2</schemaVersion>
-          <resourceGroup>freebergDemo</resourceGroup>
-          <appName>freebergPostgresDemo</appName>
-          <region>westus</region>
-          <pricingTier>P1V2</pricingTier>
-          <runtime>
-            <os>linux</os>
-            <javaVersion>jre8</javaVersion>
-            <webContainer>jre8</webContainer>
-          </runtime>
-          <deployment>
-            <resources>
-              <resource>
-                <directory>${project.basedir}/target</directory>
-                <includes>
-                  <include>*.jar</include>
-                </includes>
-              </resource>
-            </resources>
-          </deployment>
-        </configuration>
-      </plugin>  
+    <plugins>  
       <plugin> 
         <groupId>org.springframework.boot</groupId>  
         <artifactId>spring-boot-maven-plugin</artifactId> 
